@@ -1,36 +1,22 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 
 # Create your views here.
 
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the quotes index.")
+def days_weeks(request, day):
+    phrases = {
+        "monday": "Monday is the start of the week.",
+        "tuesday": "Tuesday is the second day of the week.",
+        "wednesday": "Wednesday is the middle of the week.",
+        "thursday": "Thursday is the fourth day of the week.",
+        "friday": "Friday is the last day of the workweek.",
+        "saturday": "Saturday is a day for relaxation and fun.",
+        "sunday": "Sunday is a day for rest and family time."
+    }
 
+    day = day.lower()
 
-def monday(request):
-    return HttpResponse("Hi, it's Monday!")
+    quote_text = phrases.get(day, "No quote available for this day.")
 
-
-def tuesday(request):
-    return HttpResponse("Hi, it's Tuesday!")
-
-
-def wednesday(request):
-    return HttpResponse("Hi, it's Wednesday!")
-
-
-def thursday(request):
-    return HttpResponse("Hi, it's Thursday!")
-
-
-def friday(request):
-    return HttpResponse("Hi, it's Friday!")
-
-
-def saturday(request):
-    return HttpResponse("Hi, it's Saturday!")
-
-
-def sunday(request):
-    return HttpResponse("Hi, it's Sunday!")
+    return HttpResponse(f"{quote_text}")
