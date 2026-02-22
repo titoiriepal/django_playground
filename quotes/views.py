@@ -1,5 +1,10 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound
+# from django.shortcuts import render
+from django.http import (
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+)
+from django.urls import reverse
 
 # Create your views here.
 
@@ -13,16 +18,22 @@ phrases = {
     "sunday": "Sunday is a day for rest and family time."
 }
 
+days = list(phrases.keys())
+
 
 def days_weeks(request, day):
 
-    day = day.lower()
-
-    quote_text = phrases.get(day, "No quote available for this day.")
-
-    return HttpResponse(f"{quote_text}")
+    return HttpResponse(f"{phrases.get(
+        day.lower(),
+        "No quote available for this day.",
+    )}")
 
 
 def days_weeks_with_numbers(request, day):
 
-    return HttpResponse(f"{day}")
+    if day < 1 or day > len(days):
+        return HttpResponseNotFound("Invalid day number.")
+
+    redirect_path = reverse("day-quotes", args=[days[day - 1]])
+
+    return HttpResponseRedirect(redirect_path)
