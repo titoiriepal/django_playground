@@ -21,6 +21,21 @@ phrases = {
 days = list(phrases.keys())
 
 
+def index(request):
+
+    list_items = ""
+    for day in days:
+        day_url = reverse("day-quotes", args=[day])
+        list_items += f'<li><a href="{day_url}">{day.capitalize()}</a></li>'
+    html_content = f"""
+    <h1>Quotes for Days of the Week</h1>
+    <ul>
+        {list_items}
+    </ul>
+    """
+    return HttpResponse(html_content)
+
+
 def days_weeks(request, day):
 
     return HttpResponse(f"{phrases.get(
@@ -32,7 +47,7 @@ def days_weeks(request, day):
 def days_weeks_with_numbers(request, day):
 
     if day < 1 or day > len(days):
-        return HttpResponseNotFound("Invalid day number.")
+        return HttpResponseNotFound("<h2>Invalid day number.</h2>")
 
     redirect_path = reverse("day-quotes", args=[days[day - 1]])
 
