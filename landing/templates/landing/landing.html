@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi world</title>
+</head>
+<body>
+    <h1>Hi world from template</h1>
+    <h2>Name: {{ name | title}}</h2>
+    <p>Age: {{ age }}</p>
+    {% if age > 18 %}
+        <p>You are an adult.</p>
+    {% else %}
+        <p>You are a minor.</p>
+    {% endif %}
+
+
+    <p>Day: {{ today | date:"d" }} de {{ today | date:"m" }} de {{ today | date:"Y" }}</p>
+</body>
+</html>
+
