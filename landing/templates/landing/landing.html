@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hi world</title>
-</head>
-<body>
-    <h1>Hi world from template</h1>
+
+{% extends 'base.html' %}
+
+
+{% block content %}
+        <h1>Hi world from template</h1>
     <h2>Name: {{ name | title}}</h2>
     <p>Age: {{ age }}</p>
     {% if age > 18 %}
@@ -16,8 +13,8 @@
     {% endif %}
     <h2>Technologies:</h2>
     <ul>
-        {% for item in stack %}
-            <li><p>{{ item }}</p></li>
+        {% for tool in stack %}
+            <li><a href="{% url 'stack' tool=tool.name %}">{{ tool.name }}</a></li>
         {% empty %}
             <li><p>No technologies listed.</p></li>
         {% endfor %}
@@ -26,6 +23,7 @@
 
 
     <p>Day: {{ today | date:"d" }} de {{ today | date:"m" }} de {{ today | date:"Y" }}</p>
-</body>
-</html>
+{% endblock content %}
+    
+    
 

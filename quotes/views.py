@@ -1,6 +1,5 @@
-# from django.shortcuts import render
+from django.shortcuts import render
 from django.http import (
-    HttpResponse,
     HttpResponseNotFound,
     HttpResponseRedirect,
 )
@@ -23,25 +22,35 @@ days = list(phrases.keys())
 
 def index(request):
 
-    list_items = ""
-    for day in days:
-        day_url = reverse("day-quotes", args=[day])
-        list_items += f'<li><a href="{day_url}">{day.capitalize()}</a></li>'
-    html_content = f"""
-    <h1>Quotes for Days of the Week</h1>
-    <ul>
-        {list_items}
-    </ul>
-    """
-    return HttpResponse(html_content)
+    return render(
+        request,
+        "quotes/quotes.html",
+        context={
+            "title": "Quotes for Days of the Week",
+            "days": days,
+        }
+    )
 
 
 def days_weeks(request, day):
 
-    return HttpResponse(f"{phrases.get(
-        day.lower(),
-        "No quote available for this day.",
-    )}")
+    return render(
+        request,
+        "quotes/daily_phrase.html",
+        context={
+            "title": f"Quote for {day.capitalize()}",
+            "day": day.capitalize(),
+            "phrase": phrases.get(
+                day.lower(),
+                "No quote available for this day.",
+            ),
+        }
+    )
+
+    # return HttpResponse(f"{phrases.get(
+    #     day.lower(),
+    #     "No quote available for this day.",
+    # )}")
 
 
 def days_weeks_with_numbers(request, day):
