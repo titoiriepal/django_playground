@@ -14,6 +14,15 @@
     {% else %}
         <p>You are a minor.</p>
     {% endif %}
+    <h2>Technologies:</h2>
+    <ul>
+        {% for item in stack %}
+            <li><p>{{ item }}</p></li>
+        {% empty %}
+            <li><p>No technologies listed.</p></li>
+        {% endfor %}
+    </ul>
+
 
 
     <p>Day: {{ today | date:"d" }} de {{ today | date:"m" }} de {{ today | date:"Y" }}</p>

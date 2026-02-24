@@ -12,5 +12,7 @@ def home(request):
             "name": "tito",
             "age": 30,
             "today": date.today(),
+            "stack": ["Python", "Django", "JavaScript", "PHP", "React"],
+
         },
     )
