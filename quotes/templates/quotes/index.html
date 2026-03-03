@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_style %}
+    <link rel="stylesheet" href="{% static 'quotes/quotes_styles.css' %}">
+{% endblock page_style %}
+    
+
+
+{% block content %}
+<h2>Quote for every day</h2>
+{% include './includes/partial.html' %}
+
+<ul>
+{% for day in days %}
+    <li><a href="{% url 'day-quotes' day=day %}">{{ day | capfirst }}</a></li>
+{% endfor %}
+</ul>
+
+{% include './includes/footer.html' with creator="Jesús Ramos Sánchez" %}
+    
+
+{% endblock content %}
+

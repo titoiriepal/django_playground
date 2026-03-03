@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import (
-    HttpResponseNotFound,
+    # HttpResponseNotFound,
     HttpResponseRedirect,
+    # Http404
 )
 from django.urls import reverse
 
@@ -24,7 +25,7 @@ def index(request):
 
     return render(
         request,
-        "quotes/quotes.html",
+        "quotes/index.html",
         context={
             "title": "Quotes for Days of the Week",
             "days": days,
@@ -34,16 +35,26 @@ def index(request):
 
 def days_weeks(request, day):
 
+    try:
+        phrase = phrases[day.lower()]
+    except KeyError:
+        # raise Http404()  # This will render the default 404 page if DEBUG in
+        # playground settings is False
+        return render(
+            request,
+            '404.html',
+            context={
+                "title": "Page not found",
+            }
+        )
+
     return render(
         request,
         "quotes/daily_phrase.html",
         context={
             "title": f"Quote for {day.capitalize()}",
             "day": day.capitalize(),
-            "phrase": phrases.get(
-                day.lower(),
-                "No quote available for this day.",
-            ),
+            "phrase": phrase,
         }
     )
 
@@ -56,7 +67,13 @@ def days_weeks(request, day):
 def days_weeks_with_numbers(request, day):
 
     if day < 1 or day > len(days):
-        return HttpResponseNotFound("<h2>Invalid day number.</h2>")
+        return render(
+            request,
+            '404.html',
+            context={
+                "title": "Page not found",
+            }
+        )
 
     redirect_path = reverse("day-quotes", args=[days[day - 1]])
 

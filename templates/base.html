@@ -1,3 +1,5 @@
+
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,9 +14,15 @@
             {% endif %}
                 
     </title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    
+    {% block page_style %}
+        
+    {% endblock page_style %}
+        
 </head>
 <body>
-    <h1>My page</h1>
+    {% include './includes/header.html' %}
     {% block content %}
         
     {% endblock content %}
