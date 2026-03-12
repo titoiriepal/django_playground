@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minilibrary</title>
+</head>
+<body>
+    <h1>Minilibrary Page</h1>
+    <h2>Library for learning by Tito</h2>
+    <h3>{{text}}</h3>
+    <form method="get">
+        <label for="search">Search:</label>
+        <input 
+            type="text" 
+            id="search" 
+            name="query_search" 
+            placeholder="Search by title, author or genre" 
+            value="{{query}}"
+        />
+            <button type="submit">Search</button>
+    </form>  
+
+    <ul>
+        {% for book in books %}
+            <li>{{ book.title }} by {{ book.author.name }}</li>
+        {% empty %}
+            <li>No books found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
