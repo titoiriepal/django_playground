@@ -1,0 +1,233 @@
+/* static/css/minilibrary.css */
+
+:root {
+    --bg: #f4f7fb;
+    --card: #ffffff;
+    --primary: #2f6fed;
+    --primary-dark: #1f57c8;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #dbe3ee;
+    --shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+    --radius: 18px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px;
+    border: 1px solid var(--border);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+h1 {
+    font-size: 2.2rem;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+h2 {
+    font-size: 1.2rem;
+    color: var(--muted);
+    font-weight: normal;
+    margin-bottom: 12px;
+}
+
+h3 {
+    font-size: 1rem;
+    color: var(--text);
+    background-color: #f8fbff;
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.search-box {
+    margin-bottom: 28px;
+}
+
+.search-form {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-form label {
+    font-weight: bold;
+    color: var(--text);
+    min-width: 70px;
+}
+
+.search-form input[type="text"],
+.search-form input[type="date"] {
+    flex: 1;
+    min-width: 220px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-form input[type="text"]:focus,
+.search-form input[type="date"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.15);
+}
+
+.search-form button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    background-color: var(--primary);
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.search-form button:hover {
+    background-color: var(--primary-dark);
+}
+
+.search-form button:active {
+    transform: scale(0.98);
+}
+
+.book-list {
+    list-style: none;
+    margin-bottom: 28px;
+    display: grid;
+    gap: 14px;
+}
+
+.book-list li {
+    background-color: #f9fbff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.book-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+}
+
+.empty-message {
+    text-align: center;
+    color: var(--muted);
+    font-style: italic;
+    background-color: #fcfcfd;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.pagination a,
+.pagination span {
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.pagination a {
+    background-color: #eef4ff;
+    color: var(--primary);
+    border: 1px solid #d7e4ff;
+    font-weight: bold;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.pagination a:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.pagination .page-info {
+    background-color: #f8fafc;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 16px;
+    }
+
+    .container {
+        padding: 22px 18px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1rem;
+    }
+
+    .search-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-form label {
+        min-width: auto;
+    }
+
+    .search-form input[type="text"],
+    .search-form button {
+        width: 100%;
+    }
+
+    .pagination {
+        flex-direction: column;
+    }
+
+    .pagination a,
+    .pagination span {
+        width: 100%;
+        text-align: center;
+    }
+}

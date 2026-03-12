@@ -1,32 +1,69 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minilibrary</title>
+    <link rel="stylesheet" href="{% static 'css/minilibrary.css' %}">
 </head>
 <body>
-    <h1>Minilibrary Page</h1>
-    <h2>Library for learning by Tito</h2>
-    <h3>{{text}}</h3>
-    <form method="get">
-        <label for="search">Search:</label>
-        <input 
-            type="text" 
-            id="search" 
-            name="query_search" 
-            placeholder="Search by title, author or genre" 
-            value="{{query}}"
-        />
-            <button type="submit">Search</button>
-    </form>  
+    <div class="container">
+        <header>
+            <h1>Minilibrary Page</h1>
+            <h2>Library for learning by Tito</h2>
+            <h3>{{ text }}</h3>
+        </header>
 
-    <ul>
-        {% for book in books %}
-            <li>{{ book.title }} by {{ book.author.name }}</li>
-        {% empty %}
-            <li>No books found.</li>
-        {% endfor %}
-    </ul>
+
+        <section class="search-box">
+            <form method="get" class="search-form">
+                <label for="search">Search:</label>
+                <input 
+                    type="text" 
+                    id="search" 
+                    name="query_search" 
+                    placeholder="Search by title, author or genre" 
+                    value="{% if query %}{{ query }}{% endif %}"
+                />
+                <input 
+                    type="date" 
+                    name="start" 
+                    value="{{ request.GET.start }}"
+                    placeholder="Select date"
+                />
+                <input 
+                    type="date" 
+                    name="end" 
+                    value="{{ request.GET.end }}"
+                    placeholder="Select date"
+                />
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <ul class="book-list">
+            {% for book in page_obj %}
+                <li>{{ book.title }} by {{ book.author.name }} - {{book.publication_date}}</li>
+            {% empty %}
+                <li class="empty-message">No books found.</li>
+            {% endfor %}
+        </ul>
+
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&{{query_string}}">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}&{{query_string}}">Previous</a>
+            {% endif %}
+
+            <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&{{query_string}}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&{{query_string}}">Last</a>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>
