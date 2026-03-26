@@ -6,8 +6,8 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 
-from .models import Book, Review
-from .forms import ReviewSimpleForm
+from .models import Book
+from .forms import ReviewForm
 # Create your views here.
 
 User = get_user_model()
@@ -59,25 +59,18 @@ def index(request):
 def add_review(request, book_id):
     # Lógica para agregar una reseña a un libro específico
     book = get_object_or_404(Book, id=book_id)
-    form = ReviewSimpleForm(request.POST or None)
+    form = ReviewForm(request.POST or None)
 
     if request.method == 'POST':
         if form.is_valid():
-            rating = form.cleaned_data['rating']
-            text = form.cleaned_data['text']
-            user = (
-                request.user
-                if request.user.is_authenticated
-                else User.objects.first()
-            )
-            # Aquí puedes guardar la reseña en la base de datos,
-            # asociándola con el libro
-            Review.objects.create(
-                user=user,
-                book=book,
-                rating=rating,
-                text=text,
-            )
+            review = form.save(commit=False)
+            review.book = book
+            review.user = request.user
+            review.save()
+            would_recommend = form.cleaned_data.get('would_recommend')
+            if would_recommend:
+                messages.success(
+                    request, "Thank you for recommending this book!")
 
             messages.success(request, "Review added successfully!")
             # Redirige a la página principal después de agregar la reseña
@@ -88,7 +81,8 @@ def add_review(request, book_id):
                 (
                     "There was an error with your review. "
                     "Please check the form and try again."
-                )
+                ),
+                extra_tags='danger'
             )
 
     return render(request, 'minilibrary/add_review.html',
