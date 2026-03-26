@@ -1,10 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseNotFound
-from .models import Book
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+from django.contrib import messages
+
+from .models import Book, Review
+from .forms import ReviewSimpleForm
 # Create your views here.
+
+User = get_user_model()
 
 
 def index(request):
@@ -48,3 +54,45 @@ def index(request):
         })
     except Exception as e:
         return HttpResponseNotFound(f"Error fetching books: {e}")
+
+
+def add_review(request, book_id):
+    # Lógica para agregar una reseña a un libro específico
+    book = get_object_or_404(Book, id=book_id)
+    form = ReviewSimpleForm(request.POST or None)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            rating = form.cleaned_data['rating']
+            text = form.cleaned_data['text']
+            user = (
+                request.user
+                if request.user.is_authenticated
+                else User.objects.first()
+            )
+            # Aquí puedes guardar la reseña en la base de datos,
+            # asociándola con el libro
+            Review.objects.create(
+                user=user,
+                book=book,
+                rating=rating,
+                text=text,
+            )
+
+            messages.success(request, "Review added successfully!")
+            # Redirige a la página principal después de agregar la reseña
+            return redirect('recommend_book', book_id=book.id)
+        else:
+            messages.error(
+                request,
+                (
+                    "There was an error with your review. "
+                    "Please check the form and try again."
+                )
+            )
+
+    return render(request, 'minilibrary/add_review.html',
+                  context={
+                      "form": form,
+                      "book": book,
+                  })
