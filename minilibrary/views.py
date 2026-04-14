@@ -1,16 +1,33 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponse
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib import messages
+from django.views import View
+from django.views.generic import TemplateView
 
 from .models import Book
 from .forms import ReviewForm
+
 # Create your views here.
 
 User = get_user_model()
+
+
+class Hello(View):
+    def get(self, request):
+        return HttpResponse("Hello, World! From CBV.")
+
+
+class WelcomeView(TemplateView):
+    template_name = 'minilibrary/welcome.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['total_books'] = Book.objects.count()
+        return context
 
 
 def index(request):
