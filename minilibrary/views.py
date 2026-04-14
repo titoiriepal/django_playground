@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView, DetailView
 
 from .models import Book
 from .forms import ReviewForm
@@ -28,6 +28,34 @@ class WelcomeView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['total_books'] = Book.objects.count()
         return context
+
+
+class BookListView(ListView):
+    model = Book
+    template_name = 'minilibrary/book_list.html'
+    context_object_name = 'books'
+    paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        page_obj = context['page_obj']
+        paginator = context['paginator']
+
+        start = max(page_obj.number - 2, 1)
+        end = min(page_obj.number + 2, paginator.num_pages)
+
+        context['custom_page_range'] = range(start, end + 1)
+
+        return context
+
+
+class BookDetailView(DetailView):
+    model = Book
+    template_name = 'minilibrary/book_detail.html'
+    context_object_name = 'book'
+    # slug_field = 'id'
+    # slug_url_kwarg = 'pk'
 
 
 def index(request):
