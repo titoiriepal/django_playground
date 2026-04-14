@@ -11,7 +11,7 @@
             <div>
                 <a href="{% url 'book_detail' book.id %}"><strong>{{ book.title }}</strong></a> by {{ book.author }}
             </div>
-            <a href="{% url 'recommend_book' book.id %}" class="btn btn-sm btn-outline-primary">Recommend</a>
+            <a href="{% url 'add_review' book.id %}" class="btn btn-sm btn-outline-primary">Recommend</a>
         </li>
     {% empty %}
         <li class="list-group-item">No books available.</li>

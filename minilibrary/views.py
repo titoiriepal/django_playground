@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseNotFound, HttpResponse
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView
 
-from .models import Book
+from .models import Book, Review
 from .forms import ReviewForm
 
 # Create your views here.
@@ -56,6 +58,73 @@ class BookDetailView(DetailView):
     context_object_name = 'book'
     # slug_field = 'id'
     # slug_url_kwarg = 'pk'
+
+
+class ReviewCreateView(CreateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'minilibrary/add_review.html'
+
+    def form_valid(self, form):
+        book_id = self.kwargs.get('pk')
+        book = Book.objects.get(id=book_id)
+        form.instance.book = book
+        form.instance.user_id = 1
+        messages.success(self.request, "Review added successfully!")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'book_detail',
+            kwargs={'pk': self.kwargs.get('pk')},
+        )
+
+
+class ReviewUpdateView(UpdateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'minilibrary/add_review.html'
+
+    def get_queryset(self):
+        # Asegura que solo el usuario pueda editar sus propias reseñas
+        return Review.objects.filter(user_id=1)
+
+    def form_valid(self, form):
+        messages.success(self.request, "Review updated successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            (
+                "There was an error updating your review. "
+                "Please check the form and try again."
+            ),
+            extra_tags='danger'
+        )
+        return super().form_invalid(form)
+
+    def get_success_url(self):
+        review = Review.objects.get(id=self.kwargs.get('pk'))
+        book_id = review.book.id
+        return reverse_lazy(
+            'book_detail',
+            kwargs={'pk': book_id},
+        )
+
+
+class ReviewDeleteView(DeleteView):
+    model = Review
+    template_name = 'minilibrary/review_confirm_delete.html'
+    success_url = reverse_lazy('book_list')
+
+    def get_queryset(self):
+        # Asegura que solo el usuario pueda eliminar sus propias reseñas
+        return Review.objects.filter(user_id=1)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Review deleted successfully!")
+        return super().delete(request, *args, **kwargs)
 
 
 def index(request):

@@ -3,13 +3,27 @@
 
 {% block content %}
 
-<h1>Add a review for {{book.title}}</h1>
+<h1>
+    {% if object %}
+        Edit review for {{ book.title }}
+    {% else %}
+        Add a review for {{ book.title }}
+    {% endif %}
+</h1>
 
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary"">Submit Review</button>
+    <button type="submit" class="btn btn-primary">
+        {% if object %}Update Review{% else %}Submit Review{% endif %}
+    </button>
 </form>
+
+{% if object %}
+    <a href="{% url 'delete_review' object.id %}" class="btn btn-danger mt-3">
+        Delete Review
+    </a>
+{% endif %}
     
 {% endblock content %}
     

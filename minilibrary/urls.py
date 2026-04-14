@@ -12,5 +12,19 @@ urlpatterns = [
         views.BookDetailView.as_view(),
         name='book_detail',
     ),
-
+    path(
+        'books/<int:pk>/add_review/',
+        views.ReviewCreateView.as_view(),
+        name='add_review',
+    ),
+    path(
+        'books/review/<int:pk>/edit/',
+        views.ReviewUpdateView.as_view(),
+        name='edit_review',
+    ),
+    path(
+        'books/review/<int:pk>/delete/',
+        views.ReviewDeleteView.as_view(),
+        name='delete_review',
+    ),
 ]
