@@ -27,4 +27,5 @@ urlpatterns = [
         views.ReviewDeleteView.as_view(),
         name='delete_review',
     ),
+    path('time-test', views.time_test),
 ]

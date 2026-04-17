@@ -1,3 +1,4 @@
+import time
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseNotFound, HttpResponse
 from django.db.models import Q
@@ -204,3 +205,8 @@ def add_review(request, book_id):
                       "form": form,
                       "book": book,
                   })
+
+
+def time_test(request):
+    time.sleep(2)  # Simula una operación que toma tiempo
+    return HttpResponse("This is a time test view.")
