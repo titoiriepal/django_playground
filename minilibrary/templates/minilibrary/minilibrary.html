@@ -45,7 +45,7 @@
 
         <ul class="book-list">
             {% for book in page_obj %}
-                <li>{{ book.title }} by {{ book.author.name }} - {{book.publication_date}}</li>
+                <li><a href="{% url 'book_detail' pk=book.id %}">{{ book.title }} by {{ book.author.name }} - {{book.publication_date}}</a></li>
             {% empty %}
                 <li class="empty-message">No books found.</li>
             {% endfor %}
@@ -65,5 +65,18 @@
             {% endif %}
         </div>
     </div>
+
+    
+    {% if last_viewed_book %}
+        <div class="last-viewed-book">
+            <h3>Last Viewed Book</h3>
+            <a href="{% url 'book_detail' pk=last_viewed_book.id %}">{{ last_viewed_book.title }} by {{ last_viewed_book.author.name }}</a>
+        </div>
+    {% else %}
+        <div class="last-viewed-book">
+            <h3>No book viewed yet.</h3>
+        </div>
+    {% endif %}
+        
 </body>
 </html>

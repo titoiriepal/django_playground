@@ -28,4 +28,5 @@ urlpatterns = [
         name='delete_review',
     ),
     path('time-test', views.time_test),
+    path('counter', views.visit_counter),
 ]

@@ -60,6 +60,12 @@ class BookDetailView(DetailView):
     # slug_field = 'id'
     # slug_url_kwarg = 'pk'
 
+    def get(self, request, *args, **kwargs):
+
+        response = super().get(request, *args, **kwargs)
+        request.session['last_viewed_book'] = self.object.id
+        return response
+
 
 class ReviewCreateView(CreateView):
     model = Review
@@ -134,6 +140,8 @@ def index(request):
         query = request.GET.get("query_search")
         date_start = request.GET.get("start")
         date_end = request.GET.get("end")
+        last_viewed_book_id = request.session.get('last_viewed_book')
+
         if date_end == "":
             date_end = timezone.now().date().strftime("%Y-%m-%d")
 
@@ -160,12 +168,21 @@ def index(request):
             query_params.pop('page')
         query_string = query_params.urlencode()
 
+        if last_viewed_book_id:
+            try:
+                last_viewed_book = Book.objects.get(id=last_viewed_book_id)
+            except Book.DoesNotExist:
+                last_viewed_book = None
+        else:
+            last_viewed_book = None
+
         return render(request, 'minilibrary/minilibrary.html', context={
             "text": "Welcome to the Mini Library!",
             "name": "Tito",
             "page_obj": page_obj,
             "query": query,
             "query_string": query_string,
+            "last_viewed_book": last_viewed_book,
         })
     except Exception as e:
         return HttpResponseNotFound(f"Error fetching books: {e}")
@@ -210,3 +227,14 @@ def add_review(request, book_id):
 def time_test(request):
     time.sleep(2)  # Simula una operación que toma tiempo
     return HttpResponse("This is a time test view.")
+
+
+def visit_counter(request):
+    visits = request.session.get('visits', 0)
+    visits += 1
+    request.session['visits'] = visits
+
+    # Reinicia el contador después de 15 segundos de inactividad
+    request.session.set_expiry(15)
+
+    return HttpResponse(f"You have visited this page {visits} times.")

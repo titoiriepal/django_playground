@@ -57,8 +57,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'minilibrary.middleware.TimingMiddleware',
-    'minilibrary.middleware.BlockIPMiddleware',
-    'minilibrary.middleware.OfficeHoursMiddleware',
+    # 'minilibrary.middleware.BlockIPMiddleware',
+    # 'minilibrary.middleware.OfficeHoursMiddleware',
     'minilibrary.middleware.RequireLoginMiddleware',
 ]
 
@@ -135,3 +135,11 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+SESSION_COOKIE_AGE = 3600  # 1 hora en segundos
+
+# La sesión no se cierra al cerrar el navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# Reinicia el contador de tiempo en cada solicitud
+SESSION_SAVE_EVERY_REQUEST = True
