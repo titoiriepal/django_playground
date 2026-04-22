@@ -65,6 +65,16 @@ class RequireLoginMiddleware:
                 f"Unauthenticated access attempt to {request.path}. "
                 "Redirecting to login."
             )
-            return redirect('/admin/')
+            return redirect('/login/')
 
-        return self.get_response(request)
+        response = self.get_response(request)
+
+        if request.user.is_authenticated:
+            response['Cache-Control'] = (
+                'no-store, no-cache, must-revalidate, '
+                'max-age=0'
+            )
+            response['Pragma'] = 'no-cache'
+            response['Expires'] = '0'
+
+        return response

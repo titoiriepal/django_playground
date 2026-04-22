@@ -80,6 +80,11 @@
         </ul>
     </nav>
 {% endif %}
+
+<form action="{% url 'logout' %}" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Logout</button>
+</form>
     
 {% endblock content %}
     
