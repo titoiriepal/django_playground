@@ -1,12 +1,16 @@
 import time
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseNotFound, HttpResponse
+from django.http import HttpResponseForbidden
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView
 from django.views.generic import CreateView, UpdateView, DeleteView
@@ -33,7 +37,7 @@ class WelcomeView(TemplateView):
         return context
 
 
-class BookListView(ListView):
+class BookListView(LoginRequiredMixin, ListView):
     model = Book
     template_name = 'minilibrary/book_list.html'
     context_object_name = 'books'
@@ -53,7 +57,7 @@ class BookListView(ListView):
         return context
 
 
-class BookDetailView(DetailView):
+class BookDetailView(LoginRequiredMixin, DetailView):
     model = Book
     template_name = 'minilibrary/book_detail.html'
     context_object_name = 'book'
@@ -62,12 +66,19 @@ class BookDetailView(DetailView):
 
     def get(self, request, *args, **kwargs):
 
-        response = super().get(request, *args, **kwargs)
-        request.session['last_viewed_book'] = self.object.id
-        return response
+        if request.user.has_perm('minilibrary.view_book'):
+
+            response = super().get(request, *args, **kwargs)
+            request.session['last_viewed_book'] = self.object.id
+            return response
+        else:
+            return HttpResponseForbidden(
+                "You do not have permission"
+                "to view this book."
+            )
 
 
-class ReviewCreateView(CreateView):
+class ReviewCreateView(LoginRequiredMixin, CreateView):
     model = Review
     form_class = ReviewForm
     template_name = 'minilibrary/add_review.html'
@@ -76,7 +87,7 @@ class ReviewCreateView(CreateView):
         book_id = self.kwargs.get('pk')
         book = Book.objects.get(id=book_id)
         form.instance.book = book
-        form.instance.user_id = 1
+        form.instance.user_id = self.request.user.id
         messages.success(self.request, "Review added successfully!")
         return super().form_valid(form)
 
@@ -87,14 +98,14 @@ class ReviewCreateView(CreateView):
         )
 
 
-class ReviewUpdateView(UpdateView):
+class ReviewUpdateView(LoginRequiredMixin, UpdateView):
     model = Review
     form_class = ReviewForm
     template_name = 'minilibrary/add_review.html'
 
     def get_queryset(self):
         # Asegura que solo el usuario pueda editar sus propias reseñas
-        return Review.objects.filter(user_id=1)
+        return Review.objects.filter(user_id=self.request.user.id)
 
     def form_valid(self, form):
         messages.success(self.request, "Review updated successfully!")
@@ -120,20 +131,26 @@ class ReviewUpdateView(UpdateView):
         )
 
 
-class ReviewDeleteView(DeleteView):
+class ReviewDeleteView(
+    PermissionRequiredMixin,
+    LoginRequiredMixin,
+    DeleteView
+):
+    permission_required = 'minilibrary.delete_review'
     model = Review
     template_name = 'minilibrary/review_confirm_delete.html'
     success_url = reverse_lazy('book_list')
 
     def get_queryset(self):
         # Asegura que solo el usuario pueda eliminar sus propias reseñas
-        return Review.objects.filter(user_id=1)
+        return Review.objects.filter(user_id=self.request.user.id)
 
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Review deleted successfully!")
         return super().delete(request, *args, **kwargs)
 
 
+@login_required
 def index(request):
     try:
         books = Book.objects.all()
@@ -188,6 +205,7 @@ def index(request):
         return HttpResponseNotFound(f"Error fetching books: {e}")
 
 
+@permission_required('minilibrary.add_review')
 def add_review(request, book_id):
     # Lógica para agregar una reseña a un libro específico
     book = get_object_or_404(Book, id=book_id)

@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'minilibrary.middleware.TimingMiddleware',
     # 'minilibrary.middleware.BlockIPMiddleware',
     # 'minilibrary.middleware.OfficeHoursMiddleware',
-    'minilibrary.middleware.RequireLoginMiddleware',
+    # 'minilibrary.middleware.RequireLoginMiddleware',
 ]
 
 ROOT_URLCONF = 'playground.urls'
@@ -144,5 +144,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # Reinicia el contador de tiempo en cada solicitud
 SESSION_SAVE_EVERY_REQUEST = True
 
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'book_list'
 LOGOUT_REDIRECT_URL = 'login'
